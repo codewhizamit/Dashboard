@@ -1,48 +1,41 @@
-const client = new Paho.MQTT.Client("broker.hivemq.com", 8000, "clientId-" + Math.random().toString(36).substr(2, 9));
-client.onConnectionLost = onConnectionLost;
-client.onMessageArrived = onMessageArrived;
-client.connect({ onSuccess: onConnect, onFailure: onFailure, keepAliveInterval: 30 });
+// Firebase configuration with your provided credentials
+const firebaseConfig = {
+  apiKey: "AIzaSyCH5c9ePeBLC-G00gV-aBZuw6MvH0CeU-A",
+  authDomain: "exam-center-1ccfa.firebaseapp.com",
+  databaseURL: "https://exam-center-1ccfa-default-rtdb.firebaseio.com",
+  projectId: "exam-center-1ccfa",
+  storageBucket: "exam-center-1ccfa.appspot.com",
+  messagingSenderId: "your-sender-id", // Replace with your sender ID
+  appId: "your-app-id" // Replace with your app ID
+};
 
-const topics = ["exam/pen", "exam/extra_sheet", "exam/threads", "exam/tea", "exam/paper"];
-let timeouts = {};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-function onConnect() {
-  console.log("Connected to MQTT broker");
-  topics.forEach(topic => client.subscribe(topic));
-}
+const items = ["pen", "extra_sheet", "threads", "tea", "paper"];
 
-function onFailure(error) {
-  console.log("Connection failed: " + error.errorMessage);
-}
+items.forEach(item => {
+  const ref = database.ref(item);
+  ref.on("value", (snapshot) => {
+    const data = snapshot.val();
+    console.log(`Update for ${item}:`, data); // Debug log
+    
+    const card = document.getElementById(item);
+    const statusElement = card.querySelector(".status");
+    const timestampElement = card.querySelector(".timestamp");
 
-function onConnectionLost(response) {
-  console.log("Connection lost: " + response.errorMessage);
-  setTimeout(() => client.connect({ onSuccess: onConnect, keepAliveInterval: 30 }), 1000);
-}
-
-function onMessageArrived(message) {
-  const topic = message.destinationName;
-  const task = topic.split('/')[1];
-  const card = document.getElementById(task);
-  const statusElement = card.querySelector(".status");
-  const timestampElement = card.querySelector(".timestamp");
-
-  // Update status to requested (red)
-  statusElement.classList.remove("available");
-  statusElement.classList.add("requested");
-
-  // Update timestamp
-  const time = new Date().toLocaleTimeString();
-  timestampElement.textContent = `Last requested: ${time}`;
-
-  // Clear existing timeout
-  if (timeouts[task]) clearTimeout(timeouts[task]);
-
-  // Revert to available (green) after 5 seconds
-  timeouts[task] = setTimeout(() => {
-    statusElement.classList.remove("requested");
-    statusElement.classList.add("available");
-    // Timestamp persists until next request
-    delete timeouts[task];
-  }, 5000);
-}
+    if (data && data.status === "requested") {
+      statusElement.classList.remove("available");
+      statusElement.classList.add("requested");
+      const time = new Date(data.timestamp).toLocaleTimeString();
+      timestampElement.textContent = `Last requested: ${time}`;
+    } else {
+      statusElement.classList.remove("requested");
+      statusElement.classList.add("available");
+      timestampElement.textContent = data && data.timestamp ? `Last requested: ${new Date(data.timestamp).toLocaleTimeString()}` : "Last requested: Never";
+    }
+  }, (error) => {
+    console.log("Firebase error for " + item + ": " + error);
+  });
+});
