@@ -62,11 +62,11 @@
   }
   
   .available {
-    background-color: #00cc00; /* Vibrant green */
+    background-color: #00cc00;
   }
   
   .requested {
-    background-color: #ff3333; /* Vibrant red */
+    background-color: #ff3333;
   }
   
   .timestamp {
