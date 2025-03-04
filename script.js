@@ -1,4 +1,3 @@
-// Firebase configuration with your provided credentials
 const firebaseConfig = {
   apiKey: "AIzaSyCH5c9ePeBLC-G00gV-aBZuw6MvH0CeU-A",
   authDomain: "exam-center-1ccfa.firebaseapp.com",
@@ -13,29 +12,58 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+// Load custom class names from local storage or use defaults
+const defaultClassNames = { "class1": "Class 1", "class2": "Class 2" };
+const classNames = {
+  "class1": localStorage.getItem("class1-name") || defaultClassNames["class1"],
+  "class2": localStorage.getItem("class2-name") || defaultClassNames["class2"]
+};
+
+// Apply initial class names
+document.getElementById("class1-name").textContent = classNames["class1"];
+document.getElementById("class2-name").textContent = classNames["class2"];
+
 const items = ["pen", "extra_sheet", "threads", "tea", "paper"];
+const classes = ["class1", "class2"];
 
-items.forEach(item => {
-  const ref = database.ref(item);
-  ref.on("value", (snapshot) => {
-    const data = snapshot.val();
-    console.log(`Update for ${item}:`, data); // Debug log
-    
-    const card = document.getElementById(item);
-    const statusElement = card.querySelector(".status");
-    const timestampElement = card.querySelector(".timestamp");
+// Firebase real-time listeners
+classes.forEach(className => {
+  items.forEach(item => {
+    const ref = database.ref(`${className}/${item}`);
+    ref.on("value", (snapshot) => {
+      const data = snapshot.val();
+      console.log(`[${new Date().toLocaleTimeString()}] Update for ${className}/${item}:`, data);
 
-    if (data && data.status === "requested") {
-      statusElement.classList.remove("available");
-      statusElement.classList.add("requested");
-      const time = new Date(data.timestamp).toLocaleTimeString();
-      timestampElement.textContent = `Last requested: ${time}`;
-    } else {
-      statusElement.classList.remove("requested");
-      statusElement.classList.add("available");
-      timestampElement.textContent = data && data.timestamp ? `Last requested: ${new Date(data.timestamp).toLocaleTimeString()}` : "Last requested: Never";
-    }
-  }, (error) => {
-    console.log("Firebase error for " + item + ": " + error);
+      const card = document.getElementById(`${className}-${item}`);
+      const statusElement = card.querySelector(".status-circle");
+      const timestampElement = card.querySelector(".timestamp");
+
+      if (data && data.status === "requested") {
+        statusElement.classList.remove("available");
+        statusElement.classList.add("requested");
+      } else {
+        statusElement.classList.remove("requested");
+        statusElement.classList.add("available");
+      }
+      timestampElement.textContent = data && data.timestamp ? 
+        `Last updated: ${new Date(data.timestamp).toLocaleTimeString()}` : "Last updated: Never";
+    }, (error) => {
+      console.error(`Firebase error for ${className}/${item}: ${error}`);
+    });
   });
 });
+
+// Function to handle class renaming
+function renameClass(classId) {
+  const currentName = classNames[classId];
+  const newName = prompt(`Enter new name for ${currentName}:`, currentName);
+  
+  if (newName && newName.trim() !== "") {
+    classNames[classId] = newName.trim();
+    document.getElementById(`${classId}-name`).textContent = newName.trim();
+    localStorage.setItem(`${classId}-name`, newName.trim());
+    console.log(`Renamed ${classId} to ${newName}`);
+  } else if (newName !== null) {
+    alert("Class name cannot be empty!");
+  }
+}
