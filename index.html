@@ -5,40 +5,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exam Center Dashboard</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <h1>Exam Center Dashboard</h1>
-    <div class="dashboard">
-      <div class="card" id="pen">
-        <h2>Pen</h2>
-        <div class="status available"></div>
-        <p class="timestamp">Last requested: Never</p>
+    <header>
+      <h1>Exam Center Dashboard</h1>
+      <p>Real-Time Classroom Requests</p>
+    </header>
+    <div class="class-container">
+      <div class="class-section">
+        <div class="class-header">
+          <h2 id="class1-name">Class 1</h2>
+          <button class="rename-btn" onclick="renameClass('class1')">Rename</button>
+        </div>
+        <div class="dashboard" id="class1">
+          <div class="card" id="class1-pen">
+            <h3>Pen</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class1-extra_sheet">
+            <h3>Extra Sheet</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class1-threads">
+            <h3>Threads</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class1-tea">
+            <h3>Tea</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class1-paper">
+            <h3>Paper</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+        </div>
       </div>
-      <div class="card" id="extra_sheet">
-        <h2>Extra Sheet</h2>
-        <div class="status available"></div>
-        <p class="timestamp">Last requested: Never</p>
-      </div>
-      <div class="card" id="threads">
-        <h2>Threads</h2>
-        <div class="status available"></div>
-        <p class="timestamp">Last requested: Never</p>
-      </div>
-      <div class="card" id="tea">
-        <h2>Tea</h2>
-        <div class="status available"></div>
-        <p class="timestamp">Last requested: Never</p>
-      </div>
-      <div class="card" id="paper">
-        <h2>Paper</h2>
-        <div class="status available"></div>
-        <p class="timestamp">Last requested: Never</p>
+      <div class="class-section">
+        <div class="class-header">
+          <h2 id="class2-name">Class 2</h2>
+          <button class="rename-btn" onclick="renameClass('class2')">Rename</button>
+        </div>
+        <div class="dashboard" id="class2">
+          <div class="card" id="class2-pen">
+            <h3>Pen</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class2-extra_sheet">
+            <h3>Extra Sheet</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class2-threads">
+            <h3>Threads</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class2-tea">
+            <h3>Tea</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+          <div class="card" id="class2-paper">
+            <h3>Paper</h3>
+            <div class="status-circle available"></div>
+            <p class="timestamp">Last updated: Never</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <!-- Firebase Compatibility Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
   <script src="script.js"></script>
